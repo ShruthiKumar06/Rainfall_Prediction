@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather Prediction</title>
+    <style>
+        body {
+            background-color: lavender;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            background-color: rgb(244, 231, 240);
+            margin-top: 40px;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            display: flex;
+            gap: 40px;
+        }
+
+        .left-side {
+            flex: 1;
+            padding-right: 20px;
+        }
+
+        .right-side {
+            flex: 2;
+        }
+
+        h1 {
+            font-size: 2em;
+            margin-bottom: 30px;
+            color: #333;
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-section {
+            display: flex;
+            gap: 30px;
+        }
+
+        .form-column {
+            flex: 1;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 6px;
+            color: #555;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: #fdfdfd;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #007BFF;
+            box-shadow: 0 0 4px rgba(0, 123, 255, 0.4);
+        }
+
+        .submit-btn {
+            width: 100%;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .submit-btn button {
+            background-color: #007BFF;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-btn button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            text-align: center;
+            font-size: 1.3em;
+            margin-top: 30px;
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: rgba(0, 128, 0, 0.1);
+            color: #333;
+        }
+
+        @media screen and (max-width: 768px) {
+            .form-section {
+                flex-direction: column;
+            }
+
+            .container {
+                flex-direction: column;
+                padding: 20px;
+            }
+        }
+        @keyframes oscillate {
+    0%   { transform: translateY(0px); }
+    50%  { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+.left-side {
+    flex: 1;
+    padding-right: 20px;
+    background-color: #eec4fea7; /* Light blue shade */
+    border-radius: 15px;
+    padding: 30px;
+    animation: oscillate 6s ease-in-out infinite;
+}
+
+    </style>
+    <script>
+        function toggleFields() {
+            const dataset = "{{ dataset }}";
+            document.getElementById("aus-form").style.display = (dataset === "Australia") ? "block" : "none";
+            document.getElementById("tnj-form").style.display = (dataset === "Thanjavur") ? "block" : "none";
+        }
+
+        window.onload = toggleFields;
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="left-side">
+            <h1>Welcome to Weather Predictor</h1>
+            <p>Enter the weather details to predict if it will rain tomorrow.</p>
+        </div>
+        <div class="right-side">
+            <form method="POST" action="/predict">
+
+                <!-- Australian Dataset Form -->
+                <div id="aus-form" style="display:none;">
+                    <h3>Australian Weather Features</h3>
+                    <div class="form-section">
+                        <div class="form-column">
+                            {% for f in aus_features[0:8] %}
+                            <div class="form-group">
+                                <label>{{ f }}</label>
+                                <input type="text" name="{{ f }}" placeholder="{% if f == 'MinTemp' %}-10 to 30°C
+                                                {% elif f == 'MaxTemp' %}10 to 50°C
+                                                {% elif f == 'Rainfall' %}0 to 300 mm
+                                                {% elif f == 'Evaporation' %}0 to 30 mm
+                                                {% elif f == 'Sunshine' %}0 to 15 hours
+                                                {% elif f == 'WindGustSpeed' %}0 to 150 km/h
+                                                {% elif f == 'WindSpeed9am' or f == 'WindSpeed3pm' %}0 to 60 km/h
+                                                {% else %}Enter value{% endif %}">
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-column">
+                            {% for f in aus_features[8:] %}
+                            <div class="form-group">
+                                <label>{{ f }}</label>
+                                <input type="text" name="{{ f }}" placeholder="{% if f == 'Humidity9am' or f == 'Humidity3pm' %}0 to 100%
+                                                {% elif f == 'Pressure9am' or f == 'Pressure3pm' %}980 to 1050 hPa
+                                                {% elif f == 'Cloud9am' or f == 'Cloud3pm' %}0 to 9 oktas
+                                                {% elif f == 'Temp9am' or f == 'Temp3pm' %}-5 to 45°C
+                                                {% else %}Enter value{% endif %}">
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Location:</label>
+                        <select name="Location">
+                            {% for loc in aus_locations %}
+                            <option value="{{ loc }}">{{ loc }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Wind Gust Direction:</label>
+                        <select name="WindGustDir">
+                            {% for dir in wind_directions %}
+                            <option value="{{ dir }}">{{ dir }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Wind Direction 9am:</label>
+                        <select name="WindDir9am">
+                            {% for dir in wind_directions %}
+                            <option value="{{ dir }}">{{ dir }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Wind Direction 3pm:</label>
+                        <select name="WindDir3pm">
+                            {% for dir in wind_directions %}
+                            <option value="{{ dir }}">{{ dir }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Rain Today:</label>
+                        <select name="RainToday">
+                            {% for opt in rain_today_options %}
+                            <option value="{{ opt }}">{{ opt }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Thanjavur Dataset Form -->
+                <div id="tnj-form" style="display:none;">
+                    <h3>Thanjavur Weather Features</h3>
+                    <div class="form-section">
+                        <div class="form-column">
+                            {% for f in thanjavur_features %}
+                            <div class="form-group">
+                                <label>{{ f }}</label>
+                                <input type="text" name="{{ f }}" placeholder="{% if f == 'MinTemp' %}15 to 30°C
+                                                {% elif f == 'MaxTemp' %}25 to 45°C
+                                                {% elif f == 'Rainfall' %}0 to 200 mm
+                                                {% elif f == 'Humidity' %}20 to 100%
+                                                {% elif f == 'Pressure' %}980 to 1050 hPa
+                                                {% elif f == 'WindSpeed' %}0 to 60 km/h
+                                                {% elif f == 'Temperature' %}15 to 45°C
+                                                {% else %}Enter value{% endif %}">
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Rain Today:</label>
+                        <select name="RainToday">
+                            {% for opt in rain_today_options %}
+                            <option value="{{ opt }}">{{ opt }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="submit-btn">
+                    <button type="submit">Predict</button>
+                </div>
+
+                {% if prediction %}
+                <div class="result">
+                    Prediction Result: <strong>{{ prediction }}</strong>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Select Dataset</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8beed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: rgb(226, 214, 214);
+            padding: 40px 50px;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            animation: fadeIn 1s ease-in-out, float 4s ease-in-out infinite;
+        }
+
+        h2 {
+            color: #1a237e;
+            margin-bottom: 25px;
+        }
+
+        label {
+            font-size: 18px;
+            color: #232729;
+        }
+
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 25px;
+            font-size: 16px;
+            background-color: #1a237e;
+            color: rgb(252, 247, 247);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #004d99;
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Select location for Weather Prediction</h2>
+        <form method="POST" action="{{ url_for('choose_dataset') }}">
+            <label>
+                <input type="radio" name="dataset" value="Australia" checked> Australian
+            </label><br><br>
+            <label>
+                <input type="radio" name="dataset" value="Thanjavur"> Thanjavur
+            </label><br><br>
+            <button type="submit">Proceed to Input Form</button>
+        </form>
+    </div>
+</body>
+</html>
